@@ -35,14 +35,15 @@ app.use(function(req, res, next)
 // app.get('/example/c', [cb0, cb1, cb2])
 
 app.get('/', function(req, res) {
-  res.send('hello world in port 3001')
 	client.lpush("myPages",req.url)
+  res.send('hello world in port 3001')
+	
 })
 
 
 app.get('/recent', function(req, res) {
 	
-	var pages= client.lrange("myPages",0,4,function(error,items){
+	client.lrange("myPages",0,4,function(error,items){
 		items.forEach(function(item){
 			console.log(item)
 			
@@ -51,39 +52,47 @@ app.get('/recent', function(req, res) {
 	})
   
 })
-// client.set("key", "value");
-// client.get("key", function(err,value){ console.log(value)});
-// app.get('/set',function(req,res){
-// 	client.set("key", "this message will self-destruct in 10 seconds.");
-// 	client.lpush("myPages",req.url)
-// 	client.expire("key",10);
-// })
-// app.get('/get',function(req,res){
-// 	client.get("key", function(err,value){ console.log(value)});
-// 	var value=client.get("key", value)
-// 	client.lpush("myPages",req.url)
-// 	res.send(value)
-// })
-//
-// app.post('/upload',[ multer({ dest: './uploads/'}), function(req, res){
-//    console.log(req.body) // form fields
-//    console.log(req.files) // form files
-//
-//    if( req.files.image )
-//    {
-// 	   fs.readFile( req.files.image.path, function (err, data) {
-// 	  		if (err) throw err;
-// 	  		var img = new Buffer(data).toString('base64');
-// 			client.lpush("myimg",img)
-// 	  		console.log(img);
-// 		});
-// 	}
-//
-//    res.status(204).end()
-// }]);
+
+
+client.set("key", "value");
+client.get("key", function(err,value){ console.log(value)});
+
+
+app.get('/set',function(req,res){
+	client.lpush("myPages",req.url)
+	client.set("key", "this message will self-destruct in 10 seconds.");
+	client.expire("key",10);
+})
+
+
+app.get('/get',function(req,res){
+	client.lpush("myPages",req.url)
+	client.get("key", function(err,value){ console.log(value)});
+	var value=client.get("key", value)
+	
+	res.send(value)
+})
+
+app.post('/upload',[ multer({ dest: './uploads/'}), function(req, res){
+   console.log(req.body) // form fields
+   console.log(req.files) // form files
+
+   if( req.files.image )
+   {
+	   fs.readFile( req.files.image.path, function (err, data) {
+	  		if (err) throw err;
+	  		var img = new Buffer(data).toString('base64');
+			client.lpush("myimg",img)
+	  		console.log(img);
+		});
+	}
+
+   res.status(204).end()
+}]);
 
 app.get('/meow', function(req, res) {
 	{
+		client.lpush("myPages",req.url)
 		client.lrange("myimg",0,1,function(err,items){
 			var imagedata=items[0]
 			res.send("<h1>\n<img src='data:my_pic.jpg;base64,"+imagedata+"'/>");

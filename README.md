@@ -1,28 +1,19 @@
 Cache, Proxies, Queues
 =========================
-
+##Homework3(Option 2)
 ### Setup
 
 * Clone this repo, run `npm install`.
 * Install redis and run on localhost:6379
+go to redis's directory and run
+	src/redis-server
 
 ### A simple web server
+I have created three servers on the local host, server which runs on port 3000 is acting as proxy and servers on port 3001 and port 3002 runs as normal servers.
 
-Use [express](http://expressjs.com/) to install a simple web server.
-
-	var server = app.listen(3000, function () {
-	
-	  var host = server.address().address
-	  var port = server.address().port
-	
-	  console.log('Example app listening at http://%s:%s', host, port)
-	})
-
-Express uses the concept of routes to use pattern matching against requests and sending them to specific functions.  You can simply write back a response body.
-
-	app.get('/', function(req, res) {
-	  res.send('hello world')
-	})
+	node proxy.js(port on 3000)
+	node server1.js(port on 3001)
+	node server2.js(port on 3002)
 
 ### Redis
 
@@ -38,6 +29,8 @@ In general, you can run all the redis commands in the following manner: client.C
 
 ### An expiring cache
 
+This function is implement on port 3001. Please visit the http://localhost:3000/get,http://localhost:3000/set to check the function and please watch the console output.
+
 Create two routes, `/get` and `/set`.
 
 When `/set` is visited, set a new key, with the value:
@@ -50,30 +43,19 @@ When `/get` is visited, fetch that key, and send value back to the client: `res.
 
 ### Recent visited sites
 
-Create a new route, `/recent`, which will display the most recently visited sites.
+This function is implement on port 3001. Please visit the http://localhost:3000/recent to check the function and please watch the console output and page. The page will show in the tuple the five recent url you visited.
 
-There is already a global hook setup, which will allow you to see each site that is requested:
-
-	app.use(function(req, res, next) 
-	{
-	...
-
-Use the lpush, ltrim, and lrange redis commands to store the most recent 5 sites visited, and return that to the client.
 
 ### Cat picture uploads: queue
 
-Implement two routes, `/upload`, and `/meow`.
- 
-A stub for upload and meow has already been provided.
+This function is implement on port 3000,3001,3002. 
 
-Use curl to help you upload easily.
-
+Before visiting the page, you should start the server and upload a picture using the following command.
+	
 	curl -F "image=@./img/morning.jpg" localhost:3000/upload
 
-Have `upload` store the images in a queue.  Have `meow` display the most recent image to the client and *remove* the image from the queue.
+Please visit the http://localhost:3000/meow to check the result and please notice since I have implemented proxy on it, it will redirect you to http://localhost:3001/meow or http://localhost:3002/meow. It will display the most recent image to the client and *remove* the image from the queue.
 
 ### Proxy server
 
-Bonus: How might you use redis and express to introduce a proxy server?
-
-See [rpoplpush](http://redis.io/commands/rpoplpush)
+If you visit the http://localhost:3000, you will notice that everytime you visit it, you will have a different url which is either on port 3001 or on port 3002. The server will automatically direct you to either of the sites.
