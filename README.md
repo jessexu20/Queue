@@ -43,8 +43,9 @@ When `/get` is visited, fetch that key, and send value back to the client: `res.
 
 ### Recent visited sites
 
-This function is implement on port 3001. Please visit the http://localhost:3000/recent to check the function and please watch the console output and page. The page will show in the tuple the five recent url you visited.
+This function is implement on port 3001. Please visit the following to check the function and please watch the console output and page. The page will show in the tuple the five recent urls you visited.
 
+	http://localhost:3001/recent
 
 ### Cat picture uploads: queue
 
@@ -54,7 +55,11 @@ Before visiting the page, you should start the server and upload a picture using
 	
 	curl -F "image=@./img/morning.jpg" localhost:3000/upload
 
-Please visit the http://localhost:3000/meow to check the result and please notice since I have implemented proxy on it, it will redirect you to http://localhost:3001/meow or http://localhost:3002/meow. It will display the most recent image to the client and *remove* the image from the queue.
+Please visit the following website to check the result and please notice since I have implemented proxy on it, it will redirect you to  http://localhost:3001/meow  or  http://localhost:3002/meow.
+
+	http://localhost:3000/meow
+
+It will display the most recent image to the client and *remove* the image from the queue.
 
 ### Proxy server
 
