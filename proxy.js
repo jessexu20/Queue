@@ -33,10 +33,16 @@ app.use(function(req, res, next)
 // }
 
 // app.get('/example/c', [cb0, cb1, cb2])
-
-app.get('/', function(req, res) {
-  res.send('hello world in Port 3002')
+function proxy(req,res){
 	client.lpush("myPages",req.url)
+	client.rpoplpush("sitesList","leftLists",function(error,item){
+		console.log(item)
+		res.redirect("http://localhost:"+item+req.url);
+	});
+	client.rpoplpush("leftLists","sitesList")
+}
+app.get('/', function(req, res) {
+  	proxy(req,res)
 })
 
 
@@ -83,19 +89,16 @@ app.post('/upload',[ multer({ dest: './uploads/'}), function(req, res){
 }]);
 
 app.get('/meow', function(req, res) {
-	{
-		client.lrange("myimg",0,1,function(err,items){
-			var imagedata=items[0]
-			res.send("<h1>\n<img src='data:my_pic.jpg;base64,"+imagedata+"'/>");
-		})
-	}
+	proxy(req,res)
 })
+
+
 // HTTP SERVER
-var server = app.listen(3002, function () {
+var server = app.listen(3000, function () {
 
   var host = server.address().address
   var port = server.address().port
-	client.lpush("sitesList",3002)
+	client.lpush("sitesList",3000)
   console.log('Example app listening at http://%s:%s', host, port)
 })
 

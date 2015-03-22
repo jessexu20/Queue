@@ -35,13 +35,8 @@ app.use(function(req, res, next)
 // app.get('/example/c', [cb0, cb1, cb2])
 
 app.get('/', function(req, res) {
-  
+  res.send('hello world in Port 3002')
 	client.lpush("myPages",req.url)
-	client.rpoplpush("sitesList","leftLists",function(error,item){
-		console.log(item)
-		res.redirect("http://localhost:"+item+req.url);
-	});
-	client.rpoplpush("leftLists","sitesList")
 })
 
 
@@ -56,36 +51,36 @@ app.get('/recent', function(req, res) {
 	})
   
 })
-client.set("key", "value");
-client.get("key", function(err,value){ console.log(value)});
-app.get('/set',function(req,res){
-	client.set("key", "this message will self-destruct in 10 seconds.");
-	client.lpush("myPages",req.url)
-	client.expire("key",10);
-})
-app.get('/get',function(req,res){
-	client.get("key", function(err,value){ console.log(value)});
-	var value=client.get("key", value)
-	client.lpush("myPages",req.url)
-	res.send(value)
-})
+// client.set("key", "value");
+// client.get("key", function(err,value){ console.log(value)});
+// app.get('/set',function(req,res){
+// 	client.set("key", "this message will self-destruct in 10 seconds.");
+// 	client.lpush("myPages",req.url)
+// 	client.expire("key",10);
+// })
+// app.get('/get',function(req,res){
+// 	client.get("key", function(err,value){ console.log(value)});
+// 	var value=client.get("key", value)
+// 	client.lpush("myPages",req.url)
+// 	res.send(value)
+// })
 
-app.post('/upload',[ multer({ dest: './uploads/'}), function(req, res){
-   console.log(req.body) // form fields
-   console.log(req.files) // form files
-
-   if( req.files.image )
-   {
-	   fs.readFile( req.files.image.path, function (err, data) {
-	  		if (err) throw err;
-	  		var img = new Buffer(data).toString('base64');
-			client.lpush("myimg",img)
-	  		console.log(img);
-		});
-	}
-
-   res.status(204).end()
-}]);
+// app.post('/upload',[ multer({ dest: './uploads/'}), function(req, res){
+//    console.log(req.body) // form fields
+//    console.log(req.files) // form files
+//
+//    if( req.files.image )
+//    {
+// 	   fs.readFile( req.files.image.path, function (err, data) {
+// 	  		if (err) throw err;
+// 	  		var img = new Buffer(data).toString('base64');
+// 			client.lpush("myimg",img)
+// 	  		console.log(img);
+// 		});
+// 	}
+//
+//    res.status(204).end()
+// }]);
 
 app.get('/meow', function(req, res) {
 	{
@@ -95,14 +90,12 @@ app.get('/meow', function(req, res) {
 		})
 	}
 })
-
-
 // HTTP SERVER
-var server = app.listen(3000, function () {
+var server = app.listen(3002, function () {
 
   var host = server.address().address
   var port = server.address().port
-	client.lpush("sitesList",3000)
+	client.lpush("sitesList",3002)
   console.log('Example app listening at http://%s:%s', host, port)
 })
 
